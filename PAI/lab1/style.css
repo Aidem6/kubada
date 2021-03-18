@@ -1,0 +1,30 @@
+body {
+    background-size: 35px;
+    background-image: url(https://cdn-lubimyczytac.pl/upload/books/243000/243909/367537-352x500.jpg);
+    background-repeat: repeat-y;
+}
+li { 
+    list-style-type: square
+}
+#cena {
+    color: red;
+    font-weight: bold;
+}
+.wstęp {
+    font-style: italic;
+}
+td img:hover {
+    border-style: solid;
+    border-color: blue;
+}
+h1 + h2 {
+    letter-spacing: 5px;
+}
+[colspan="2"] p {
+    font-size: small;
+}
+p + p {
+    color: gray;
+}
+h1 { color: blue }
+h1 { color: green }
