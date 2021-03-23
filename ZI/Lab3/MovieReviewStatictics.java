@@ -50,7 +50,9 @@ public class MovieReviewStatictics
     public static String CHUNKER_MODEL = "models/en-chunker.bin";
     public static String LEMMATIZER_DICT = "models/en-lemmatizer.dict";
     public static String NAME_MODEL = "models/en-ner-person.bin";
-    public static String ENTITY_XYZ_MODEL = "models/en-ner-xyz.bin";
+    public static String ORGANIZATION_MODEL = "models/en-ner-organization.bin";
+    public static String LOCATION_MODEL = "models/en-ner-location.bin";
+    public static String ENTITY_XYZ_MODEL = "models/en-ner-xxx.bin";
 
     private static final String DOCUMENTS_PATH = "movies/";
     private int _verbCount = 0;
@@ -128,10 +130,10 @@ public class MovieReviewStatictics
             File modelFile4 = new File(NAME_MODEL);
             _peopleModel = new TokenNameFinderModel(modelFile4);
 
-            File modelFile5 = new File(NAME_MODEL);
+            File modelFile5 = new File(LOCATION_MODEL);
             _placesModel = new TokenNameFinderModel(modelFile5);
 
-            File modelFile6 = new File(NAME_MODEL);
+            File modelFile6 = new File(ORGANIZATION_MODEL);
             _organizationsModel = new TokenNameFinderModel(modelFile6);
 
         } catch (IOException ex)
@@ -175,21 +177,18 @@ public class MovieReviewStatictics
 
         //    -  people
         Span people[] = new Span[] { };
-//        NameFinderME nam = new NameFinderME(_peopleModel);
-//        people = nam.find(tokenizedtext);
+        NameFinderME nam = new NameFinderME(_peopleModel);
+        people = nam.find(tokenizedtext);
 
         //    - locations
         Span locations[] = new Span[] { };
+        NameFinderME loc = new NameFinderME(_placesModel);
+        locations = loc.find(tokenizedtext);
 
         //    - organisations
         Span organisations[] = new Span[] { };
-
-        // TODO + compute the following overall (for all movies) POS tagging statistics:
-        //    - percentage number of adverbs (class variable, private int _verbCount = 0)
-        //    - percentage number of adjectives (class variable, private int _nounCount = 0)
-        //    - percentage number of verbs (class variable, private int _adjectiveCount = 0)
-        //    - percentage number of nouns (class variable, private int _adverbCount = 0)
-        //    + update _totalTokensCount
+        NameFinderME org = new NameFinderME(_organizationsModel);
+        organisations = org.find(tokenizedtext);
 
         List<String> stringList = new ArrayList<String>(Arrays.asList(tags));
         _verbCount += Collections.frequency(stringList, "VB");
@@ -198,17 +197,14 @@ public class MovieReviewStatictics
         _adverbCount += Collections.frequency(stringList, "RB");
         _totalTokensCount += stringList.size();
 
-        // TODO derive people, locations, organisations (use tokens),
-        // (update people, locations, organisations lists).
-
         saveResults("Sentences", noSentences);
         saveResults("Tokens", noTokens);
         saveResults("Stemmed forms (unique)", noStemmed);
         saveResults("Words from a dictionary (unique)", noWords);
 
-        saveNamedEntities("People", people, new String[] { });
-        saveNamedEntities("Locations", locations, new String[] { });
-        saveNamedEntities("Organizations", organisations, new String[] { });
+        saveNamedEntities("People", people, tokenizedtext);
+        saveNamedEntities("Locations", locations, tokenizedtext);
+        saveNamedEntities("Organizations", organisations, tokenizedtext);
     }
 
 

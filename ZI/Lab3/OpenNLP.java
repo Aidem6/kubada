@@ -211,9 +211,26 @@ public class OpenNLP {
 		}
 	}
 
+	private void saveNamedEntities(String entityType, Span spans[], String tokens[])
+	{
+		StringBuilder s = new StringBuilder(entityType + ": ");
+		for (int sp = 0; sp < spans.length; sp++)
+		{
+			for (int i = spans[sp].getStart(); i < spans[sp].getEnd(); i++)
+			{
+				s.append(tokens[i]);
+				if (i < spans[sp].getEnd() - 1) s.append(" ");
+			}
+			if (sp < spans.length - 1) s.append(", ");
+		}
+
+		System.out.println("   " + s);
+		System.out.println(s);
+	}
+
 	private void nameFinding() throws IOException
     {
-		File modelFile = new File(NAME_MODEL);//ENTITY_XYZ_MODEL);//
+		File modelFile = new File(NAME_MODEL);
 		TokenNameFinderModel model = new TokenNameFinderModel(modelFile);
 
 		NameFinderME nam = new NameFinderME(model);
@@ -238,9 +255,7 @@ public class OpenNLP {
 		String[] tokenizedtext = tok.tokenize(text);
 		Span[] names = nam.find(tokenizedtext);
 
-		for (int i=0; i<names.length; i++) {
-			System.out.println(names[i]);
-		}
+		saveNamedEntities("People", names, tokenizedtext);
 	}
 
 }
